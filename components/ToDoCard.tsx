@@ -1,11 +1,14 @@
 "use client";
 
+import getUrl from "@/lib/getUrl";
 import { useBoardStore } from "@/store/BoardStore";
 import {
   DraggableProvidedDragHandleProps,
   DraggableProvidedDraggableProps,
 } from "@hello-pangea/dnd";
 import { XCircleIcon } from "@heroicons/react/24/solid";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
 type Props = {
   todo: Todo;
@@ -25,6 +28,34 @@ function ToDoCard({
   dragHandleProps,
 }: Props) {
   const deleteTask = useBoardStore((state) => state.deleteTask);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    
+    if (todo.image) {
+      
+      const fetchImage = async () => {
+        try {
+          console.log("CON 1");
+          if (typeof todo.image === "string") {
+            console.log("CON 2");
+            const imageObj = JSON.parse(todo.image);
+            console.log("Image Object: ", imageObj);
+            const url = await getUrl(imageObj);
+            console.log("Generated URL: ", url);
+            if (url) {
+              setImageUrl(url.href);
+            }
+          }
+          
+        } catch (error) {
+          console.log("ADIOS");
+          console.error("Failed to parse image JSON", error);
+        }
+      };
+      fetchImage();
+    }
+  }, [todo]);
 
   return (
     <div
@@ -43,7 +74,17 @@ function ToDoCard({
         </button>
       </div>
 
-      {/** Add image here */}
+      {imageUrl && (
+        <div className="h-full w-full rounded-b-md">
+          <Image
+            src={imageUrl}
+            alt="Task image"
+            width={400}
+            height={200}
+            className="w-full object-contain rounded-b-md"
+          />
+        </div>
+      )}
     </div>
   );
 }

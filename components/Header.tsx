@@ -50,6 +50,7 @@ function Header() {
         />
 
         <Image
+          priority={true}
           src="/trello-logo.png"
           alt="Trello Logo"
           width={300}

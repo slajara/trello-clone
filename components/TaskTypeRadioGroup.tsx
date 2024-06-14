@@ -1,7 +1,7 @@
 "use client";
 
 import { useBoardStore } from "@/store/BoardStore";
-import { RadioGroup } from "@headlessui/react";
+import { Description, Label, Radio, RadioGroup } from "@headlessui/react";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 
 const types = [
@@ -18,7 +18,7 @@ const types = [
     color: "bg-yellow-500",
   },
   {
-    cid: "done",
+    id: "done",
     name: "Done",
     description: "A task that has been completed",
     color: "bg-green-500",
@@ -41,15 +41,11 @@ function TaskTypeRadioGroup() {
         >
           <div className="space-y-2">
             {types.map((type) => (
-              <RadioGroup.Option
+              <Radio
                 key={type.id}
                 value={type.id}
-                className={({ active, checked }) =>
-                  `${
-                    active
-                      ? "ring-2 ring-white ring-opacity-60 ring-offset-2 ring-offset-sky-300"
-                      : ""
-                  }
+                className={({ checked }) =>
+                  `
                     ${
                       checked
                         ? `${type.color} bg-opacity-75 text-white`
@@ -61,27 +57,27 @@ function TaskTypeRadioGroup() {
                     `
                 }
               >
-                {({ active, checked }) => (
+                {({ checked }) => (
                   <>
                     <div className="flex w-full items-center justify-between">
                       <div className="flex items-center">
                         <div className="text-sm">
-                          <RadioGroup.Label
+                          <Label
                             as="p"
                             className={`font-medium ${
                               checked ? "text-white" : "text-gray-900"
                             }`}
                           >
                             {type.name}
-                          </RadioGroup.Label>
-                          <RadioGroup.Description
+                          </Label>
+                          <Description
                             as="span"
                             className={`inline ${
                               checked ? "text-white" : "text-gray-500"
                             }`}
                           >
                             <span>{type.description}</span>
-                          </RadioGroup.Description>
+                          </Description>
                         </div>
                       </div>
                       {checked && (
@@ -92,7 +88,7 @@ function TaskTypeRadioGroup() {
                     </div>
                   </>
                 )}
-              </RadioGroup.Option>
+              </Radio>
             ))}
           </div>
         </RadioGroup>

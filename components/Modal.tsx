@@ -1,7 +1,13 @@
 "use client";
 
-import { Fragment, useRef } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import { FormEvent, Fragment, useRef } from "react";
+import {
+  Dialog,
+  DialogPanel,
+  DialogTitle,
+  Transition,
+  TransitionChild,
+} from "@headlessui/react";
 import { userModalStore } from "@/store/ModalStore";
 import { useBoardStore } from "@/store/BoardStore";
 import TaskTypeRadioGroup from "./TaskTypeRadioGroup";
@@ -11,24 +17,39 @@ import { PhotoIcon } from "@heroicons/react/24/solid";
 function Modal() {
   const imagePickerRef = useRef<HTMLInputElement>(null);
 
-  const [image, setImage, newTaskInput, setNewTaskInput] = useBoardStore(
-    (state) => [
+  const [addTask, image, setImage, newTaskInput, setNewTaskInput, newTaskType] =
+    useBoardStore((state) => [
+      state.addTask,
       state.image,
       state.setImage,
       state.newTaskInput,
       state.setNewTaskInput,
-    ]
-  );
+      state.newTaskType,
+    ]);
 
   const [isOpen, closeModal] = userModalStore((state) => [
     state.isOpen,
     state.closeModal,
   ]);
 
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!newTaskInput) return;
+
+    addTask(newTaskInput, newTaskType, image);
+    setImage(null);
+    closeModal();
+  };
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="form" className="relative z-10" onClose={closeModal}>
-        <Transition.Child
+      <Dialog
+        as="form"
+        onSubmit={handleSubmit}
+        className="relative z-10"
+        onClose={closeModal}
+      >
+        <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
@@ -38,11 +59,11 @@ function Modal() {
           leaveTo="opacity-0"
         >
           <div className="fixed inset-0 bg-black bg-opacity-25" />
-        </Transition.Child>
+        </TransitionChild>
 
         <div className="fixed inset-0 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <Transition.Child
+            <TransitionChild
               as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0"
@@ -51,13 +72,13 @@ function Modal() {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                <Dialog.Title
+              <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <DialogTitle
                   as="h3"
                   className="text-lg font-medium leading-6 text-gray-900 pb-2"
                 >
                   Add a Task
-                </Dialog.Title>
+                </DialogTitle>
 
                 <div className="mt-2">
                   <input
@@ -70,7 +91,7 @@ function Modal() {
                 </div>
                 <TaskTypeRadioGroup />
 
-                <div>
+                <div className="mt-4">
                   <button
                     type="button"
                     onClick={() => {
@@ -106,8 +127,18 @@ function Modal() {
                     }}
                   />
                 </div>
-              </Dialog.Panel>
-            </Transition.Child>
+
+                <div>
+                  <button
+                    type="submit"
+                    disabled={!newTaskInput}
+                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:bg-gray-100 disabled:text-gray-300 disabled:cursor-not-allowed"
+                  >
+                    Add Task
+                  </button>
+                </div>
+              </DialogPanel>
+            </TransitionChild>
           </div>
         </div>
       </Dialog>

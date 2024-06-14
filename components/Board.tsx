@@ -6,17 +6,18 @@ import { DragDropContext, DropResult, Droppable } from "@hello-pangea/dnd";
 import Column from "./Column";
 
 function Board() {
-  const [board, getBoard, setBoardState, updateTodoInDB] = useBoardStore((state) => [
-    state.board,
-    state.getBoard,
-    state.setBoardState,
-    state.updateTodoInDB,
-  ]);
+  const [board, getBoard, setBoardState, updateTodoInDB] = useBoardStore(
+    (state) => [
+      state.board,
+      state.getBoard,
+      state.setBoardState,
+      state.updateTodoInDB,
+    ]
+  );
 
   useEffect(() => {
     getBoard();
   }, [getBoard]);
-  console.log(board);
 
   const handleOnDragEnd = (result: DropResult) => {
     const { destination, source, type } = result;
