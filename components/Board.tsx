@@ -35,11 +35,17 @@ function Board() {
         ...board,
         columns: rearrangedColumns,
       });
+      return;
     }
 
     const columns = Array.from(board.columns);
     const startColIndex = columns[Number(source.droppableId)];
     const finishColIndex = columns[Number(destination.droppableId)];
+
+    if (!startColIndex || !finishColIndex) {
+      console.error("Invalid destination index");
+      return;
+    }
 
     const startCol: Column = {
       id: startColIndex[0],
@@ -51,7 +57,6 @@ function Board() {
       todos: finishColIndex[1].todos,
     };
 
-    if (!startCol || !finishCol) return;
     if (source.index === destination.index && startCol === finishCol) return;
 
     const newTodos = startCol.todos;
@@ -105,6 +110,7 @@ function Board() {
             {Array.from(board.columns.entries()).map(([id, column], index) => (
               <Column key={id} id={id} todos={column.todos} index={index} />
             ))}
+            {provided.placeholder}
           </div>
         )}
       </Droppable>
