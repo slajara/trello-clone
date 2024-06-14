@@ -74,7 +74,7 @@ export const useBoardStore = create<BoardState>((set, get) => ({
 
   addTask: async (todo: string, columnId: TypedColumn, image?: File | null) => {
     let file: Image | undefined;
-  
+
     if (image) {
       const fileUploaded = await uploadImage(image);
       if (fileUploaded) {
@@ -84,37 +84,35 @@ export const useBoardStore = create<BoardState>((set, get) => ({
         };
       }
     }
-  
+
     const newTodo = {
       title: todo,
       status: columnId,
-      ...(file && { image: JSON.stringify(file) }), // Convert file to JSON string
+      ...(file && { image: JSON.stringify(file) }), // Convertir file a cadena JSON
     };
-  
-    console.log("Saving new todo:", newTodo);
-  
+
     const { $id } = await databases.createDocument(
       process.env.NEXT_PUBLIC_DATABASE_ID!,
       process.env.NEXT_PUBLIC_TODOS_COLLECTION_ID!,
       ID.unique(),
       newTodo
     );
-  
+
     set({ newTaskInput: "" });
-  
+
     set((state) => {
       const newColumns = new Map(state.board.columns);
-  
+
       const newTodoItem: Todo = {
         $id,
         $createdAt: new Date().toISOString(),
         title: todo,
         status: columnId,
-        ...(file && { image: JSON.stringify(file) }), // Convert file to JSON string
+        ...(file && { image: JSON.stringify(file) }),
       };
-  
+
       const column = newColumns.get(columnId);
-  
+
       if (!column) {
         newColumns.set(columnId, {
           id: columnId,
@@ -130,5 +128,4 @@ export const useBoardStore = create<BoardState>((set, get) => ({
       };
     });
   },
-  
 }));

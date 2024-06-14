@@ -31,25 +31,23 @@ function ToDoCard({
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    
     if (todo.image) {
-      
       const fetchImage = async () => {
         try {
-          console.log("CON 1");
+          let imageObj;
+
           if (typeof todo.image === "string") {
-            console.log("CON 2");
-            const imageObj = JSON.parse(todo.image);
-            console.log("Image Object: ", imageObj);
-            const url = await getUrl(imageObj);
-            console.log("Generated URL: ", url);
-            if (url) {
-              setImageUrl(url.href);
-            }
+            imageObj = JSON.parse(todo.image);
+          } else if (typeof todo.image === "object") {
+            imageObj = todo.image;
           }
-          
+
+          const url = await getUrl(imageObj);
+
+          if (url) {
+            setImageUrl(url);
+          }
         } catch (error) {
-          console.log("ADIOS");
           console.error("Failed to parse image JSON", error);
         }
       };
@@ -77,6 +75,7 @@ function ToDoCard({
       {imageUrl && (
         <div className="h-full w-full rounded-b-md">
           <Image
+          priority={true}
             src={imageUrl}
             alt="Task image"
             width={400}
